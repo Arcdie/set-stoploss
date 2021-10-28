@@ -7,7 +7,7 @@
 4. Следовать инструкциям в консоли;
 
 <b>CScalp должен быть выключенным</b>;<br>
-<b>Путь к папке должен иметь вид C:/ProgramFiles/FRS Launcher</b>
+<b>Путь к папке должен иметь вид C:/ProgramFiles/FRS Launcher</b>;
 
 # Donate
 
