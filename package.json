@@ -1,0 +1,9 @@
+{
+  "name": "set-stoploss",
+  "version": "1.0.0",
+  "desctiption": "helper for cscalp",
+  "main": "app.js",
+  "dependencies": {
+    "axios": "^0.23.0"
+  }
+}
