@@ -8,6 +8,10 @@ let settings = {
   pathToCscalpFolder: false,
 };
 
+const updateSettings = () => {
+  fs.writeFileSync('settings.json', JSON.stringify(settings));
+};
+
 if (fs.existsSync('settings.json')) {
   settings = fs.readFileSync('settings.json', 'utf8');
   settings = JSON.parse(settings);
@@ -16,10 +20,12 @@ if (fs.existsSync('settings.json')) {
 }
 
 if (!settings.areModulesLoaded) {
-  const result = execSync('npm i --loglevel=error');
+  execSync('npm i --loglevel=error');
   settings.areModulesLoaded = true;
   updateSettings();
 }
+
+const xml2js = require('xml2js');
 
 const {
   getExchangeInfo,
@@ -87,9 +93,11 @@ const start = async () => {
     }
 
     const instrumentPrice = parseFloat(instrumentPriceDoc.price);
+    const percentPerPrice = instrumentPrice * (percentForCalculate / 100);
+
     const tickSize = parseFloat(symbol.filters[0].tickSize);
 
-    const numberTicks = Math.floor(instrumentPrice / tickSize);
+    const numberTicks = Math.floor(percentPerPrice / tickSize);
 
     filesNames.forEach(async fileName => {
       if (!fileName.includes(symbolName)) {
@@ -103,7 +111,7 @@ const start = async () => {
       const fileContent = fs.readFileSync(`${pathToSettingsFolder}/${fileName}`, 'utf8');
       const parsedContent = await xml2js.parseStringPromise(fileContent);
 
-      parsedContent.Settings.TRADING[0].StopLoss_Steps[0].$.Value = numberTicks.toString();
+      parsedContent.Settings.TRADING[0].StopLoss_Steps[0].$.Value = numberTicks.toString().replace('.', ',');
 
       const builder = new xml2js.Builder();
       const xml = builder.buildObject(parsedContent);
@@ -152,10 +160,6 @@ const askQuestion = (nameStep) => {
       return start();
     });
   }
-};
-
-const updateSettings = () => {
-  fs.writeFileSync('settings.json', JSON.stringify(settings));
 };
 
 start();
